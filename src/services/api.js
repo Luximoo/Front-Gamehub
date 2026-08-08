@@ -2,16 +2,42 @@
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // Initial Fallback Storage (in case backend server is offline during initial preview)
+// Initial Fallback Storage
 const initialFallback = {
   players: [
-    { id: 'p1', name: 'David', nickname: 'Davovich', role: 'admin', avatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&auto=format&fit=crop&q=80', discord: 'Davovich#1337', steam: 'davovich_99', riot: 'Davovich#LAN', psn: 'Davovich_Play', xbox: 'DavoX', teamId: 't1', selectedGames: ['g_fn','g_cr','g_lol','g_l4d2','g_fg','g_mr','g_fifa','g_rl','g_au'] },
-    { id: 'p2', name: 'Felipe', nickname: 'PipeStriker', role: 'player', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80', discord: 'PipeStriker#9999', steam: 'pipestriker', riot: 'PipeStriker#LAS', psn: 'Pipe_PS5', xbox: 'PipeMaster', teamId: 't1', selectedGames: ['g_fn','g_fifa','g_rl','g_fg'] },
-    { id: 'p3', name: 'Carlos', nickname: 'CharliPro', role: 'player', avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80', discord: 'CharliPro#4422', steam: 'charlipro_gamer', riot: 'Charli#NA1', psn: 'Charli_Sony', xbox: 'CharliOne', teamId: 't2', selectedGames: ['g_lol','g_cr','g_mr','g_au'] },
-    { id: 'p4', name: 'Andrés', nickname: 'AndyNinja', role: 'player', avatar: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150&auto=format&fit=crop&q=80', discord: 'AndyNinja#8080', steam: 'andyninja', riot: 'Andy#LAN', psn: 'AndyPSN', xbox: 'AndyXbox', teamId: 't2', selectedGames: ['g_l4d2','g_fn','g_rl','g_au'] }
+    {
+      id: "p1",
+      name: "David",
+      nickname: "luximo",
+      role: "admin",
+      avatar: "https://tse1.mm.bing.net/th/id/OIP.9CyMJSzP9bu2bAp-P4x35wHaLM?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+      discord: "davidluxi50#3307",
+      steam: "davidluxi50",
+      riot: "aun no lo se jaja",
+      psn: "Davovich_Play",
+      xbox: "DavoX",
+      teamId: "t_1786145011266",
+      selectedGames: ["g_fn","g_cr","g_lol","g_l4d2","g_fg","g_mr","g_fifa","g_rl","g_au"],
+      pin: "6253"
+    }
   ],
   teams: [
-    { id: 't1', name: 'Cyber Alpha', tag: 'ALPHA', color: '#38bdf8', logo: '🛡️', description: 'Escuadrón dominante de Fortnite, Rocket League y FIFA' },
-    { id: 't2', name: 'Neon Tryhards', tag: 'TRY', color: '#f472b6', logo: '⚡', description: 'Especialistas en LoL, Clash Royale y Marvel Rivals' }
+    {
+      id: "t_1786145011266",
+      name: "Politécnica ",
+      tag: "Poli",
+      color: "#38bdf8",
+      logo: "⚔️",
+      description: ""
+    },
+    {
+      id: "t_1786145025530",
+      name: "Autonoma ",
+      tag: "Auto",
+      color: "#38bdf8",
+      logo: "🛡️",
+      description: ""
+    }
   ],
   games: [
     { id: 'g_fn', name: 'Fortnite', category: 'Battle Royale / Survival', platforms: ['PC','PS5','Xbox','Switch'], format: '1v1 Zone Wars / Battle Royale Kills', availableModes: ['Zone Wars 1v1','Battle Royale (Top + Kills)','Box Fights 2v2'], modeFormats: { 'Zone Wars 1v1': '1v1', 'Battle Royale (Top + Kills)': 'ffa', 'Box Fights 2v2': '2v2' } },
@@ -39,7 +65,15 @@ export function getFfaPointsForPlacement(placement) {
 function getLocalFallback() {
   const saved = localStorage.getItem('gamerhub_fallback_db');
   if (saved) {
-    try { return JSON.parse(saved); } catch (e) { }
+    try {
+      const parsed = JSON.parse(saved);
+      // Clean up old fallback if it contains stale Davovich
+      if (parsed.players && parsed.players.some(p => p.nickname === 'Davovich' || p.nickname === 'PipeStriker')) {
+        localStorage.removeItem('gamerhub_fallback_db');
+        return JSON.parse(JSON.stringify(initialFallback));
+      }
+      return parsed;
+    } catch (e) { }
   }
   return JSON.parse(JSON.stringify(initialFallback));
 }
@@ -65,7 +99,24 @@ async function request(endpoint, options = {}) {
       ...options
     });
     if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
-    return await res.json();
+    const data = await res.json();
+
+    // Automatically update fallback cache when live request succeeds
+    if (endpoint === '/players' && method === 'GET') {
+      const current = getLocalFallback();
+      current.players = data;
+      saveLocalFallback(current);
+    } else if (endpoint === '/teams' && method === 'GET') {
+      const current = getLocalFallback();
+      current.teams = data;
+      saveLocalFallback(current);
+    } else if (endpoint === '/tournaments' && method === 'GET') {
+      const current = getLocalFallback();
+      current.tournaments = data;
+      saveLocalFallback(current);
+    }
+
+    return data;
   } catch (err) {
     console.warn(`⚠️ Backend offline (${BASE_URL}${endpoint}). Usando almacenamiento local.`, err.message);
     return handleFallback(endpoint, options);
