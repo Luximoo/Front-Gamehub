@@ -344,47 +344,49 @@ export default function TournamentSection({ tournament, tournaments, teams, game
                           </span>
                         </div>
                         
-                        <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white' }}>
-                          <thead>
-                            <tr style={{ color: 'var(--text-secondary)', borderBottom: '1px solid var(--border-subtle)', textAlign: 'left' }}>
-                              <th style={{ padding: '0.75rem 0.5rem', fontWeight: '500' }}>Posición</th>
-                              <th style={{ padding: '0.75rem 0.5rem', fontWeight: '500' }}>Jugador</th>
-                              <th style={{ padding: '0.75rem 0.5rem', fontWeight: '500' }}>Equipo</th>
-                              <th style={{ padding: '0.75rem 0.5rem', fontWeight: '500' }}>Puntos</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {match.rankings.map((r, i) => {
-                              const p = players.find(x => x.id === r.playerId);
-                              const t = teams.find(x => x.id === r.teamId);
-                              const localEdit = ffaScores[match.id]?.find(x => x.playerId === r.playerId);
-                              const displayPlacement = localEdit ? localEdit.placement : r.placement;
-                              
-                              return (
-                                <tr key={r.playerId} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                                  <td style={{ padding: '0.75rem 0.5rem' }}>
-                                    {isAdmin ? (
-                                      <input 
-                                        type="number" 
-                                        min="1" 
-                                        value={displayPlacement || ''} 
-                                        onChange={e => handleFfaPlacementChange(match.id, r.playerId, e.target.value)}
-                                        style={{ width: '60px', padding: '0.4rem', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: 'white', borderRadius: '4px', outline: 'none' }}
-                                      />
-                                    ) : (
-                                      <span style={{ fontWeight: 'bold', color: r.placement === 1 ? 'var(--accent-amber)' : 'white', fontSize: '1.1rem', paddingLeft: '0.5rem' }}>{r.placement || '-'}</span>
-                                    )}
-                                  </td>
-                                  <td style={{ padding: '0.75rem 0.5rem' }}>
-                                    {p && <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}><img src={p.avatar} alt="" style={{ width:'28px', height:'28px', borderRadius:'50%', objectFit: 'cover' }}/> <span style={{ fontWeight: '500' }}>{p.nickname}</span></div>}
-                                  </td>
-                                  <td style={{ padding: '0.75rem 0.5rem', color: 'var(--text-secondary)' }}>{t?.name || 'N/A'}</td>
-                                  <td style={{ padding: '0.75rem 0.5rem', fontWeight: 'bold', color: 'var(--accent-cyan)', fontSize: '1.1rem' }}>{r.points || 0}</td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
+                        <div className="table-scroll-container">
+                          <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white', minWidth: '450px' }}>
+                            <thead>
+                              <tr style={{ color: 'var(--text-secondary)', borderBottom: '1px solid var(--border-subtle)', textAlign: 'left' }}>
+                                <th style={{ padding: '0.75rem 0.5rem', fontWeight: '500' }}>Posición</th>
+                                <th style={{ padding: '0.75rem 0.5rem', fontWeight: '500' }}>Jugador</th>
+                                <th style={{ padding: '0.75rem 0.5rem', fontWeight: '500' }}>Equipo</th>
+                                <th style={{ padding: '0.75rem 0.5rem', fontWeight: '500' }}>Puntos</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {match.rankings.map((r, i) => {
+                                const p = players.find(x => x.id === r.playerId);
+                                const t = teams.find(x => x.id === r.teamId);
+                                const localEdit = ffaScores[match.id]?.find(x => x.playerId === r.playerId);
+                                const displayPlacement = localEdit ? localEdit.placement : r.placement;
+                                
+                                return (
+                                  <tr key={r.playerId} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                    <td style={{ padding: '0.75rem 0.5rem' }}>
+                                      {isAdmin ? (
+                                        <input 
+                                          type="number" 
+                                          min="1" 
+                                          value={displayPlacement || ''} 
+                                          onChange={e => handleFfaPlacementChange(match.id, r.playerId, e.target.value)}
+                                          style={{ width: '60px', padding: '0.4rem', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: 'white', borderRadius: '4px', outline: 'none' }}
+                                        />
+                                      ) : (
+                                        <span style={{ fontWeight: 'bold', color: r.placement === 1 ? 'var(--accent-amber)' : 'white', fontSize: '1.1rem', paddingLeft: '0.5rem' }}>{r.placement || '-'}</span>
+                                      )}
+                                    </td>
+                                    <td style={{ padding: '0.75rem 0.5rem' }}>
+                                      {p && <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}><img src={p.avatar} alt="" style={{ width:'28px', height:'28px', borderRadius:'50%', objectFit: 'cover' }}/> <span style={{ fontWeight: '500' }}>{p.nickname}</span></div>}
+                                    </td>
+                                    <td style={{ padding: '0.75rem 0.5rem', color: 'var(--text-secondary)' }}>{t?.name || 'N/A'}</td>
+                                    <td style={{ padding: '0.75rem 0.5rem', fontWeight: 'bold', color: 'var(--accent-cyan)', fontSize: '1.1rem' }}>{r.points || 0}</td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
                         {isAdmin && (
                           <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'flex-end' }}>
                             <button onClick={() => handleSaveFfa(match)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.65rem 1.25rem', background: 'var(--accent-cyan)', color: 'black', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>
@@ -408,8 +410,8 @@ export default function TournamentSection({ tournament, tournaments, teams, game
                   const isCompleted = match.status === 'completed' || match.score1 > 0 || match.score2 > 0;
 
                   return (
-                    <div key={match.id} style={{ display: 'flex', alignItems: 'stretch', background: 'var(--bg-main)', borderRadius: '10px', border: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
-                      <div style={{ flex: 1, padding: '1.25rem', borderRight: '1px solid var(--border-subtle)' }}>
+                    <div key={match.id} className="match-card-container" style={{ display: 'flex', alignItems: 'stretch', background: 'var(--bg-main)', borderRadius: '10px', border: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
+                      <div className="match-card-team" style={{ flex: 1, padding: '1.25rem', borderRight: '1px solid var(--border-subtle)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
                           {t1?.logo ? <span style={{ fontSize: '1.5rem' }}>{t1.logo}</span> : <Shield size={24} color="var(--text-secondary)" />}
                           <span style={{ color: 'white', fontWeight: 'bold', fontSize: '1.1rem' }}>{t1?.name || 'Equipo 1'}</span>
@@ -419,7 +421,7 @@ export default function TournamentSection({ tournament, tournaments, teams, game
                         </div>
                       </div>
 
-                      <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.015)', minWidth: '180px' }}>
+                      <div className="match-card-score" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.015)', minWidth: '180px' }}>
                         {isAdmin ? (
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
                             <input type="number" value={localS1} onChange={e => handleScoreChange(match.id, 1, e.target.value)} style={{ width: '60px', textAlign: 'center', padding: '0.5rem', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: 'white', borderRadius: '6px', fontSize: '1.25rem', fontWeight: 'bold', outline: 'none' }} />
@@ -445,7 +447,7 @@ export default function TournamentSection({ tournament, tournaments, teams, game
                         )}
                       </div>
 
-                      <div style={{ flex: 1, padding: '1.25rem', borderLeft: '1px solid var(--border-subtle)', textAlign: 'right' }}>
+                      <div className="match-card-team match-card-team-right" style={{ flex: 1, padding: '1.25rem', borderLeft: '1px solid var(--border-subtle)', textAlign: 'right' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.75rem', marginBottom: '1.25rem' }}>
                           <span style={{ color: 'white', fontWeight: 'bold', fontSize: '1.1rem' }}>{t2?.name || 'Equipo 2'}</span>
                           {t2?.logo ? <span style={{ fontSize: '1.5rem' }}>{t2.logo}</span> : <Shield size={24} color="var(--text-secondary)" />}

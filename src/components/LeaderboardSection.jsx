@@ -132,44 +132,46 @@ export default function LeaderboardSection({ teamLeaderboard, playerStats, tourn
             <p>No hay datos de clasificación aún. Crea un torneo y registra resultados.</p>
           </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                <th style={thStyle}>#</th>
-                <th style={{ ...thStyle, textAlign: 'left' }}>Equipo</th>
-                <th style={thStyle}>Partidas</th>
-                <th style={thStyle}>V</th>
-                <th style={thStyle}>E</th>
-                <th style={thStyle}>D</th>
-                <th style={thStyle}>PTS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {leaderboard.map((entry, i) => (
-                <tr key={entry.teamId} style={{ borderBottom: '1px solid var(--border-subtle)', background: i === 0 ? 'rgba(251,191,36,0.05)' : 'transparent' }}>
-                  <td style={tdStyle}>
-                    <span style={{ fontWeight: 700, color: i === 0 ? 'var(--accent-amber)' : (i === 1 ? 'var(--text-secondary)' : 'var(--text-muted)'), fontSize: '0.9rem' }}>
-                      #{i + 1}
-                    </span>
-                  </td>
-                  <td style={{ ...tdStyle, textAlign: 'left' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span style={{ fontSize: '1.3rem' }}>{entry.teamLogo}</span>
-                      <div>
-                        <span style={{ fontWeight: 600, color: '#fff', fontSize: '0.9rem' }}>{entry.teamName}</span>
-                        <span style={{ marginLeft: '6px', fontSize: '0.75rem', color: 'var(--text-muted)' }}>[{entry.teamTag}]</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td style={tdStyle}>{entry.matchesPlayed}</td>
-                  <td style={{ ...tdStyle, color: 'var(--accent-emerald)' }}>{entry.wins}</td>
-                  <td style={{ ...tdStyle, color: 'var(--text-secondary)' }}>{entry.draws}</td>
-                  <td style={{ ...tdStyle, color: 'var(--accent-pink)' }}>{entry.losses}</td>
-                  <td style={{ ...tdStyle, fontWeight: 800, color: 'var(--accent-amber)', fontSize: '1rem' }}>{entry.totalPoints}</td>
+          <div className="table-scroll-container">
+            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '500px' }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                  <th style={thStyle}>#</th>
+                  <th style={{ ...thStyle, textAlign: 'left' }}>Equipo</th>
+                  <th style={thStyle}>Partidas</th>
+                  <th style={thStyle}>V</th>
+                  <th style={thStyle}>E</th>
+                  <th style={thStyle}>D</th>
+                  <th style={thStyle}>PTS</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {leaderboard.map((entry, i) => (
+                  <tr key={entry.teamId} style={{ borderBottom: '1px solid var(--border-subtle)', background: i === 0 ? 'rgba(251,191,36,0.05)' : 'transparent' }}>
+                    <td style={tdStyle}>
+                      <span style={{ fontWeight: 700, color: i === 0 ? 'var(--accent-amber)' : (i === 1 ? 'var(--text-secondary)' : 'var(--text-muted)'), fontSize: '0.9rem' }}>
+                        #{i + 1}
+                      </span>
+                    </td>
+                    <td style={{ ...tdStyle, textAlign: 'left' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontSize: '1.3rem' }}>{entry.teamLogo}</span>
+                        <div>
+                          <span style={{ fontWeight: 600, color: '#fff', fontSize: '0.9rem' }}>{entry.teamName}</span>
+                          <span style={{ marginLeft: '6px', fontSize: '0.75rem', color: 'var(--text-muted)' }}>[{entry.teamTag}]</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td style={tdStyle}>{entry.matchesPlayed}</td>
+                    <td style={{ ...tdStyle, color: 'var(--accent-emerald)' }}>{entry.wins}</td>
+                    <td style={{ ...tdStyle, color: 'var(--text-secondary)' }}>{entry.draws}</td>
+                    <td style={{ ...tdStyle, color: 'var(--accent-pink)' }}>{entry.losses}</td>
+                    <td style={{ ...tdStyle, fontWeight: 800, color: 'var(--accent-amber)', fontSize: '1rem' }}>{entry.totalPoints}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
